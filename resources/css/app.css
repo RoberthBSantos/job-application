@@ -1,0 +1,16 @@
+/* Centralizar a paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Ajustar a margem dos botões de ações */
+.btn {
+    margin-right: 5px;
+}
+
+/* Ajustar o espaço entre o botão "Criar Nova Vaga" e a paginação */
+.form-inline.mb-3 {
+    margin-bottom: 20px;
+}

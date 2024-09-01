@@ -1,0 +1,3 @@
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY '123456';
+GRANT ALL PRIVILEGES ON job_application_db.* TO 'admin'@'%';
+FLUSH PRIVILEGES;
