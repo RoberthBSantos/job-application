@@ -106,13 +106,13 @@ Para interagir com a API, você precisa primeiro obter um token de autenticaçã
 ### Rota para Autenticação
 
 ```http
-POST /api/login
+POST /api/tokens/create
 ```
 
 ### Exemplo de Requisição para Obter o Token
 
 ```bash
-curl -X POST http://localhost/api/login \
+curl -X POST http://localhost/api/tokens/create \
 -H "Content-Type: application/json" \
 -d '{"email": "admin@example.com", "password": "password"}'
 ```
