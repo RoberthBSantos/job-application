@@ -7,60 +7,225 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# Visão Geral
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Este projeto é uma aplicação Laravel configurada para rodar em um ambiente Docker. Inclui um servidor Nginx, um contêiner de aplicação PHP-FPM com Laravel, e um banco de dados MySQL. Este README irá guiá-lo através dos passos necessários para configurar e executar o projeto.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Pré-requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Certifique-se de que você tem o seguinte software instalado:
 
-## Learning Laravel
+- **Docker**: [Instruções de instalação](https://docs.docker.com/get-docker/)
+- **Docker Compose**: [Instruções de instalação](https://docs.docker.com/compose/install/)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Configuração Inicial
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. **Clone o Repositório:**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   git clone https://github.com/seu-usuario/seu-repositorio.git
+   cd seu-repositorio
+   ```
 
-## Laravel Sponsors
+2. **Crie o arquivo `.env`:**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   Crie um arquivo `.env` na raiz do projeto e configure as variáveis de ambiente conforme necessário. Você pode usar o arquivo `.env.example` como base:
 
-### Premium Partners
+   ```bash
+   cp .env.example .env
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+3. **Configure as Variáveis de Ambiente do Banco de Dados:**
 
-## Contributing
+   No arquivo `.env`, certifique-se de definir as seguintes variáveis:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```env
+   MYSQL_ROOT_PASSWORD=senha_root
+   MYSQL_DATABASE=nome_do_banco
+   MYSQL_USER=usuario
+   MYSQL_PASSWORD=senha
+   ```
 
-## Code of Conduct
+## Executando a Aplicação
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **Construa e Inicie os Containers:**
 
-## Security Vulnerabilities
+   Execute o comando abaixo para construir e iniciar os containers:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   docker-compose up -d
+   ```
 
-## License
+   Isso irá iniciar os serviços definidos no `docker-compose.yml`:
+   - Um container Nginx (`web`) para servir a aplicação.
+   - Um container PHP-FPM (`app`) para executar o Laravel.
+   - Um container MySQL (`db`) como banco de dados.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+2. **Acesse a Aplicação:**
+
+   Após os containers estarem em execução, acesse a aplicação via navegador:
+
+   ```
+   http://localhost
+   ```
+
+## Migrando e Populando o Banco de Dados
+
+O banco de dados será automaticamente migrado e populado quando o Docker Compose iniciar, conforme definido no comando `command` do serviço `app`. Este comando executa:
+
+```bash
+php artisan migrate --force && php artisan db:seed --force
+```
+
+## Como Parar a Aplicação
+
+Para parar todos os containers:
+
+```bash
+docker-compose down
+```
+
+## Seeds para Teste
+
+Para testar a paginação e outras funcionalidades, seeds foram criados para adicionar 50 candidatos e 50 vagas automaticamente ao banco de dados.
+
+## Debug e Logs
+
+Caso você precise verificar logs ou informações de erro, utilize:
+
+```bash
+docker-compose logs
+```
+
+# API
+
+## 🔑 Obtendo o Token de Autenticação
+
+Para interagir com a API, você precisa primeiro obter um token de autenticação. O token pode ser gerado utilizando o endpoint de login da API.
+
+### Rota para Autenticação
+
+```http
+POST /api/login
+```
+
+### Exemplo de Requisição para Obter o Token
+
+```bash
+curl -X POST http://localhost/api/login \
+-H "Content-Type: application/json" \
+-d '{"email": "admin@example.com", "password": "password"}'
+```
+
+A resposta será um token JWT que deve ser usado nas requisições subsequentes para autenticação. Inclua o token no cabeçalho `Authorization` de cada requisição da seguinte forma:
+
+```
+Authorization: Bearer {YOUR_API_TOKEN}
+```
+
+### Usuário Padrão Criado pelo Docker
+
+Quando a aplicação é configurada e iniciada com o Docker, um usuário padrão é automaticamente criado no banco de dados:
+
+- **Email:** `admin@example.com`
+- **Senha:** `password`
+
+Use estas credenciais para fazer login e obter o token de autenticação.
+
+
+## API Endpoints
+
+A aplicação expõe uma API RESTful para gerenciar candidatos e vagas de emprego. Abaixo estão os principais endpoints e exemplos de como realizar requisições utilizando cURL.
+
+### Autenticação
+
+Todas as requisições da API devem ser autenticadas usando um token de API. Adicione o token ao header da requisição como `Authorization: Bearer {YOUR_API_TOKEN}`.
+
+### Endpoints de Candidatos
+
+#### Listar Candidatos:
+
+```bash
+curl -X GET http://localhost/api/candidates -H "Authorization: Bearer {YOUR_API_TOKEN}"
+```
+
+#### Criar um Novo Candidato:
+
+```bash
+curl -X POST http://localhost/api/candidates \
+-H "Authorization: Bearer {YOUR_API_TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{"name": "John Doe", "email": "john.doe@example.com", "phone": "123456789", "address": "123 Street, City"}'
+```
+
+#### Mostrar um Candidato Específico:
+
+```bash
+curl -X GET http://localhost/api/candidates/{id} -H "Authorization: Bearer {YOUR_API_TOKEN}"
+```
+
+#### Atualizar um Candidato:
+
+```bash
+curl -X PUT http://localhost/api/candidates/{id} \
+-H "Authorization: Bearer {YOUR_API_TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{"name": "Jane Doe", "email": "jane.doe@example.com"}'
+```
+
+#### Excluir um Candidato:
+
+```bash
+curl -X DELETE http://localhost/api/candidates/{id} -H "Authorization: Bearer {YOUR_API_TOKEN}"
+```
+
+#### Inscrever um Candidato em Vagas:
+
+```bash
+curl -X POST http://localhost/api/candidates/{id}/apply \
+-H "Authorization: Bearer {YOUR_API_TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{"job_ids": [1, 2, 3]}'
+```
+
+### Endpoints de Vagas
+
+#### Listar Vagas:
+
+```bash
+curl -X GET http://localhost/api/jobs -H "Authorization: Bearer {YOUR_API_TOKEN}"
+```
+
+#### Criar uma Nova Vaga:
+
+```bash
+curl -X POST http://localhost/api/jobs \
+-H "Authorization: Bearer {YOUR_API_TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{"title": "Desenvolvedor Backend", "description": "Trabalhar com PHP e Laravel", "location": "Remoto", "salary": 5000, "type": "full-time"}'
+```
+
+#### Mostrar uma Vaga Específica:
+
+```bash
+curl -X GET http://localhost/api/jobs/{id} -H "Authorization: Bearer {YOUR_API_TOKEN}"
+```
+
+#### Atualizar uma Vaga:
+
+```bash
+curl -X PUT http://localhost/api/jobs/{id} \
+-H "Authorization: Bearer {YOUR_API_TOKEN}" \
+-H "Content-Type: application/json" \
+-d '{"title": "Desenvolvedor Full Stack", "salary": 6000}'
+```
+
+#### Excluir uma Vaga:
+
+```bash
+curl -X DELETE http://localhost/api/jobs/{id} -H "Authorization: Bearer {YOUR_API_TOKEN}"
+```
+
+### Observação
+
+Substitua `{id}` pelo ID do candidato ou da vaga que deseja manipular, e `{YOUR_API_TOKEN}` pelo token de autenticação gerado para o usuário autenticado.
