@@ -202,7 +202,7 @@ curl -X GET http://localhost/api/jobs -H "Authorization: Bearer {YOUR_API_TOKEN}
 curl -X POST http://localhost/api/jobs \
 -H "Authorization: Bearer {YOUR_API_TOKEN}" \
 -H "Content-Type: application/json" \
--d '{"title": "Desenvolvedor Backend", "description": "Trabalhar com PHP e Laravel", "location": "Remoto", "salary": 5000, "type": "full-time"}'
+-d '{"title": "Desenvolvedor Backend","type": "CLT","paused": false}'
 ```
 
 #### Mostrar uma Vaga Específica:
